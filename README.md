@@ -12,4 +12,14 @@ You just need to enter the topic and it will scrape information about it from wi
 
 run `pip install -r requirements.txt` after cloning the repositories, after that run anime.py
 
-you can arguments of createAnime function
+you can edit arguments of createAnime function to use it according to following syntax
+```python
+createAnime(inputImageName, outputVideoName)
+'''
+@PARAM: 
+inputImageName : the image path(with extension) to be processed and made into a video
+outputVideoName : the name of the video to be saved (with extension)
+note that if you are not having an outputVideoName with .avi extension then you have to change fourcc in createAnime function
+'''
+```
+
