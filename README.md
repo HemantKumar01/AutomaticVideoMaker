@@ -8,6 +8,7 @@ You just need to enter the topic and it will scrape information about it from wi
 - [X] Process Image to create great looking drawing videos;
 - [ ] upload to youtube
 
+
 ## Usage:
 
 run `pip install -r requirements.txt` after cloning the repositories, after that run anime.py
@@ -22,4 +23,6 @@ outputVideoName : the name of the video to be saved (with extension)
 note that if you are not having an outputVideoName with .avi extension then you have to change fourcc in createAnime function
 '''
 ```
+
+then run anime.py
 
