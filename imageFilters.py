@@ -22,14 +22,32 @@ def createSketch(img, blurX=21, blurY=21):
 
 def createLineDrawing(img, foreroundBGR=[0, 0, 0], backgroundBGR=[255, 255, 255]):
     time1 = time.time()
+    imageBackground = False
+    if isinstance(backgroundBGR, str):
+        backgroundImage = cv2.imread(backgroundBGR)
+        backgroundImage = cv2.resize(backgroundImage, (img.shape[1], img.shape[0]))
+        imageBackground = True
 
     img = createSketch(img)
 
     result = np.zeros((img.shape[0], img.shape[1], 3), img.dtype)
     for y in range(len(img)):
-        result[y] = [(foreroundBGR if pixel <= 240 else backgroundBGR)
-                     for pixel in img[y]]
-
-    print(
-        f'createLineDrawing() took: {time.time() - time1} seconds')
+        if not imageBackground:
+            result[y] = [
+                (foreroundBGR if pixel <= 240 else backgroundBGR) for pixel in img[y]
+            ]
+        else:
+            result[y] = [
+                (foreroundBGR if img[y][z] <= 240 else backgroundImage[y][z])
+                for z in range(len(img[y]))
+            ]
+    print(f"createLineDrawing() took: {time.time() - time1} seconds")
     return result
+
+
+# inputImg = cv2.imread("./demo1.jpg")
+# img1 = createLineDrawing(inputImg, [43, 47, 54], "./assets/background.jpg")
+# img2 = createSketch(inputImg)
+
+# cv2.imwrite("image1.jpg", img1)
+# cv2.imwrite('image2.jpg', img2)

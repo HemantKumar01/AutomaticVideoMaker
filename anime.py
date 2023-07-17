@@ -31,9 +31,8 @@ frameRate = 30  # default = 30 ; see it's changing according to numFrames in the
 
 def setVideoWriter(name, fourcc, size, isColor=True):
     global videoWriter, numFrames, duration, skipFrames, frameRate
-    frameRate = floor(numFrames/(skipFrames*duration))
-    videoWriter = cv2.VideoWriter(
-        f"{name}", fourcc, frameRate, size, isColor)
+    frameRate = floor(numFrames / (skipFrames * duration))
+    videoWriter = cv2.VideoWriter(f"{name}", fourcc, frameRate, size, isColor)
 
 
 def addToVideo(img):
@@ -45,7 +44,12 @@ def completeVideo():
     videoWriter.release()
 
 
-def createAnime(img_path: str, outputName="output.avi", backgroundColor=[255, 255, 255], foregroundColor=[56, 50, 36]):
+def createAnime(
+    img_path: str,
+    outputName="output.avi",
+    backgroundColor=[255, 255, 255],
+    foregroundColor=[56, 50, 36],
+):
     global foreground, background, img, height, width, channel, done, bar, numFrames, blank_image
     foreground = foregroundColor
     background = backgroundColor
@@ -56,28 +60,29 @@ def createAnime(img_path: str, outputName="output.avi", backgroundColor=[255, 25
     img = image
     (height, width, channel) = img.shape
 
-    numFrames = np.count_nonzero(np.all(img != background, axis=2))
-
-    blank_image = np.zeros([height, width, channel], img.dtype)
-    blank_image.fill(255)
+    numFrames = np.count_nonzero(np.all(img == foreground, axis=2))
+    if isinstance(background, str):
+        blank_image = cv2.imread(background)
+        blank_image = cv2.resize(blank_image, (width, height))
+    else:
+        blank_image = np.full([height, width, channel], background, dtype=img.dtype)
 
     done = np.zeros([height, width], img.dtype)
 
-    bar = ChargingBar('Processing and Saving : ', max=(
-        height*width))  # showing progress bar
+    bar = ChargingBar(
+        "Processing and Saving : ", max=(height * width)
+    )  # showing progress bar
 
-    setVideoWriter(outputName, cv2.VideoWriter_fourcc(
-        *'MJPG'), (width, height))
+    setVideoWriter(outputName, cv2.VideoWriter_fourcc(*"MJPG"), (width, height))
     threading.Thread(target=showAllForegrounds, args=(outputName,)).start()
 
 
 def searchNeighbour(x, y):
-
     global done, countDone, bar, background, foreground, blank_image
 
     done[y, x] = 1
 
-    if list(img[y, x]) == background:
+    if list(img[y, x]) != foreground:
         return
 
     countDone += 1
@@ -86,16 +91,16 @@ def searchNeighbour(x, y):
     blank_image[y, x] = foreground
 
     # add frame to video after a change of {skipFrames} pixels
-    if(countDone % skipFrames == 0):
+    if countDone % skipFrames == 0:
         addToVideo(blank_image)  # *now blank_image is a modified image
 
-    if x - 1 >= 0 and not(done[y, x - 1]):
+    if x - 1 >= 0 and not (done[y, x - 1]):
         searchNeighbour(x - 1, y)
-    if x + 1 <= width - 1 and not(done[y, x + 1]):
+    if x + 1 <= width - 1 and not (done[y, x + 1]):
         searchNeighbour(x + 1, y)
-    if y - 1 >= 0 and not(done[y - 1, x]):
+    if y - 1 >= 0 and not (done[y - 1, x]):
         searchNeighbour(x, y - 1)
-    if y + 1 <= height - 1 and not(done[y + 1, x]):
+    if y + 1 <= height - 1 and not (done[y + 1, x]):
         searchNeighbour(x, y + 1)
 
 
@@ -105,7 +110,7 @@ def showAllForegrounds(outputName):
     for i in range(height):
         for j in range(width):
             bar.next()
-            if not(done[i, j]) and list(img[i, j]) != background:
+            if not (done[i, j]) and list(img[i, j]) == foreground:
                 searchNeighbour(j, i)
     bar.finish()
 
@@ -115,19 +120,26 @@ def showAllForegrounds(outputName):
         addToVideo(blank_image)
     print(f"Congratulations! video saved with following details-")
     print(
-        f'''------------------------------------------------------
+        f"""------------------------------------------------------
 Name: {outputName},     frameRate: {frameRate} frames/sec,
 duration: {duration}sec,   height: {height}px,     width:{width}px,
-backgroundColor: {background} ([b,g,r]),
+backgroundColor: {background} ([b,g,r] or path),
 foregroundColor: {foreground} ([b,g,r])
--------------------------------------------------------'''
+-------------------------------------------------------"""
     )
 
 
-createAnime("mark.jfif", "output.avi")  # (inputImageName, outputVideoName)
-'''
-@PARAM: 
-inputImageName : the image path(with extension) to be processed and made into a video
-outputVideoName : the name of the video to be saved (with extension)
-note that if you are not having an outputVideoName with .avi extension then you have to change fourcc in createAnime function
-'''
+# (inputImageName, outputVideoName)
+createAnime(
+    "./DEMO1.jpg",
+    "output1.avi",
+    backgroundColor="assets/background.jpg",
+    foregroundColor=[43, 47, 54],
+)
+
+
+# @PARAMS:
+# * inputImageName : the image path(with extension) to be processed and made into a video
+# * outputVideoName : the name of the video to be saved (with .avi)
+# * backgroundColor: color of background in [B,G,R] format or Background image path
+# * foregroundColor: color of foreground in [B,G,R] format
