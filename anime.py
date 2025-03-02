@@ -131,8 +131,8 @@ foregroundColor: {foreground} ([b,g,r])
 
 # (inputImageName, outputVideoName)
 createAnime(
-    "./india ancient.jpg",
-    "output-india-ancient.avi",
+    "./image3.png",
+    "output.avi",
     backgroundColor="assets/background.jpg",
     foregroundColor=[43, 47, 54],
 )

@@ -1,4 +1,4 @@
 imutils==0.5.4
-opencv_python==4.5.1.48
-numpy==1.19.5
-progress==1.5
+numpy==1.26.2
+opencv_python==4.8.1.78
+progress==1.6

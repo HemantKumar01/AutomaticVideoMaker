@@ -16,20 +16,20 @@ https://user-images.githubusercontent.com/71439585/205424924-4d193c79-914b-41fb-
 
 ## Usage:
 
-run `pip install -r requirements.txt` after cloning the repositories, after that run anime.py
+run `pip install -r requirements.txt` after cloning the repositories, after that run Animation.py
 
-you can edit arguments of createAnime function to use it according to following syntax (see last lines of `anime.py`)
+you can edit arguments of createAnimation function to use it according to following syntax (see last lines of `Animation.py`)
 ```python
-createAnime(inputImageName, outputVideoName)
+createAnimation(inputImageName, outputVideoName)
 '''
 @PARAM: 
 inputImageName : the image path(with extension) to be processed and made into a video
 outputVideoName : the name of the video to be saved (with extension)
-# note that if you are not having an outputVideoName with .avi extension then you have to change fourcc in createAnime function
+# note that if you are not having an outputVideoName with .avi extension then you have to change fourcc in createAnimation function
 backgroundColor="background_image_path" or BGR_color_tuple,
 foregroundColor=bgr_color_tuple,
 '''
 ```
 
-then run anime.py
+then run Animation.py
 
